@@ -1,0 +1,17 @@
+#!/bin/bash
+
+SCRIPTPATH="$(readlink -f 2>/dev/null || perl -MCwd -e 'print Cwd::abs_path shift' $0)"
+SCRIPTDIR="$(dirname "${SCRIPTPATH}")"
+
+# Params:
+# --schema schema.json --app $name
+
+echo "Writing README.md" >&2
+## create README.md
+README="$("./node_modules/.bin/jsonschema2mk" \
+	--level 1 \
+	--plugin "${SCRIPTDIR}/js2mk_multiple_schema.js" \
+	"$@")"
+echo "$README"
+#echo "${README}" >README.md
+
