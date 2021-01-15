@@ -4,14 +4,17 @@
   "description": "This repository contains helper scripts for the development of [osiota](https://github.com/osiota/osiota).",
   "main": "index.js",
   "bin": {
-    "osiota-dev-doc-jsonschema": "doc-jsonschema"
-  },
-  "devDependencies": {
-    "jsonschema2mk": "1.0.0"
+    "osiota-dev-doc-jsonschema": "doc-jsonschema",
+	"osiota-dev-adapt-ps": "adapt-package-and-schema",
+	"osiota-dev-new-module": "new-module"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Simon Walz",
-  "license": "MIT"
+  "author": "Simon Walz and others",
+  "license": "MIT",
+  "dependencies": {
+    "jsonschema2mk": "^1.1.0",
+    "minimist": "^1.2.5"
+  }
 }
