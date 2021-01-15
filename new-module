@@ -1,0 +1,25 @@
+#!/bin/bash
+
+SCRIPTPATH="$(readlink -f 2>/dev/null || perl -MCwd -e 'print Cwd::abs_path shift' $0)"
+SCRIPTDIR="$(dirname "${SCRIPTPATH}")"
+
+NEWNAME="$1"
+#git@gitlab.ibr.cs.tu-bs.de:eneff-campus-2020/er-app-rest-api.git
+# => osiota-app-rest-api
+
+if test "x$1" = "x"
+then
+	echo "Usage: prog NEWNAME"
+	exit 2
+fi
+
+
+BASEREPO="git@github.com:osiota/base-repo-osiota-app.git"
+git clone "${BASEREPO}" "${NEWNAME}"
+cd "${NEWNAME}/"
+git remote remove origin
+
+cp "${SCRIPTDIR}/template"/* .
+
+"${SCRIPTDIR}/adapt-package-and-schema"
+
