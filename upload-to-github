@@ -1,0 +1,57 @@
+#!/bin/bash
+
+SCRIPTPATH="$(readlink -f 2>/dev/null || perl -MCwd -e 'print Cwd::abs_path shift' $0)"
+SCRIPTDIR="$(dirname "${SCRIPTPATH}")"
+
+if test ! -f "package.json"
+then
+	echo "Error: schema.json file not found."
+	exit 1
+fi
+
+if git remote get-url origin | grep -q github.com >/dev/null
+then
+	echo "Error: Repo already linked to Github"
+	exit 1
+fi
+
+APP="osiota-app-$(basename "${PWD}" | sed -e "s/^osiota-app-//g" -e "s/^er-app-//g")"
+
+REPODESC="$("${SCRIPTDIR}/get-json" --file package.json --key description | head -n 1 | sed -e "s/\..*//")"
+
+TOKEN="$(cat ~/.github-token | head -n 1)"
+if test "x${TOKEN}" = "x"
+then
+	echo "Error: Token not defined." >&2
+	echo "Please write Github token to file: ~/.gitub-token" >&2
+	exit 1
+fi
+
+curl --fail "https://api.github.com/repos/osiota/${APP}" >/dev/null 2>&1
+if test "x$?" = "x0"
+then
+	echo "Error: Repo already exists: ${APP}" >&2
+	exit 1
+fi
+
+echo "Create Repo: ${APP}"
+echo "Description: ${REPODESC}"
+
+RESULT="$(curl --fail -H "Authorization: token  ${TOKEN}" https://api.github.com/orgs/osiota/repos -d "{\"name\":\"${APP}\", \"private\": false, \"description\": \"${REPODESC}\", \"has_wiki\": false, \"has_projects\": false}" 2>&1)"
+if test "x$?" = "x0"
+then
+	echo "Repo not created: ${APP}" >&2
+	echo "RESULT: ${RESULT}"
+	exit
+fi
+
+
+git remote | grep "origin"
+if test "x$?" = "x1"
+then
+	git remote add origin git@github.com:osiota/${APP}.git
+	git push --set-upstream origin master
+else
+	git remote set-url origin git@github.com:osiota/${APP}.git
+	git push --set-upstream origin master
+fi
