@@ -1,0 +1,9 @@
+{
+  "name": "osiota-app-MYAPP",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "Simon Walz and others",
+  "license": "MIT",
+  "dependencies": {}
+}
