@@ -1,0 +1,44 @@
+#!/usr/bin/env node
+
+const argv = require('minimist')(process.argv.slice(2));
+const fs = require("fs");
+const adapt_json = require("./helper_adapt_json.js").adapt_json;
+
+try {
+	var schema = JSON.parse(fs.readFileSync("schema.json"));
+	// throw file not found
+	// throw json not valid
+
+	// calc variables:
+	var description = schema.description;
+	if (typeof description !== "string") {
+		throw new Error("Description not defined");
+	}
+	description = description.replace(/\. .*/, "");
+
+	var app = process.cwd()
+			.replace(/.*\//, "")
+			.replace(/^(osiota|er)-app-/, "");
+
+	adapt_json("package.json", {
+		name: "osiota-app-"+app,
+		license: "MIT",
+		author: "Simon Walz and others",
+		repository: {
+			type: "git",
+			url: "https://github.com/osiota/osiota-app-"+app+".git",
+		},
+		description: description,
+	}, {
+		spaces: 2,
+		simulate: argv.simulate
+	});
+
+	adapt_json("schema.json", {
+		title: "osiota application "+app
+	}, {
+		simulate: argv.simulate
+	});
+} catch(err) {
+	console.error(err);
+}
