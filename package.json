@@ -5,8 +5,8 @@
   "main": "index.js",
   "bin": {
     "osiota-dev-doc-jsonschema": "doc-jsonschema",
-	"osiota-dev-adapt-ps": "adapt-package-and-schema",
-	"osiota-dev-new-module": "new-module"
+    "osiota-dev-adapt-ps": "adapt-package-and-schema",
+    "osiota-dev-new-module": "new-module"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
