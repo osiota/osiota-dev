@@ -1,22 +1,30 @@
-#!/bin/bash
+#!/usr/bin/env node
 
-SCRIPTPATH="$(readlink -f 2>/dev/null || perl -MCwd -e 'print Cwd::abs_path shift' $0)"
-SCRIPTDIR="$(dirname "${SCRIPTPATH}")"
+const exec = require("child_process").spawnSync;
+const argv = require('minimist')(process.argv.slice(2));
+const fse = require('fs-extra');
 
-NEWNAME="$1"
-if test "x${NEWNAME}" = "x"
-then
-	echo "Usage: prog NEWNAME"
-	exit 2
-fi
+var newname = argv._[0];
+if (typeof newname !== "string" || newname === "") {
+	console.info("Usage: prog NEWNAME");
+	process.exit(2);
+}
 
+var baserepo = "git@github.com:osiota/base-repo-osiota-app.git";
+var basedir = __dirname;
 
-BASEREPO="git@github.com:osiota/base-repo-osiota-app.git"
-git clone "${BASEREPO}" "${NEWNAME}"
-cd "${NEWNAME}/"
-git remote remove origin
+exec("git", ["clone", baserepo, newname]);
+process.chdir(newname);
 
-cp "${SCRIPTDIR}/template"/* .
+exec("git", ["remote", "remove", "origin"]);
 
-"${SCRIPTDIR}/adapt-package-and-schema"
+//cp "${SCRIPTDIR}/template"/* .
+fse.copySync(basedir + "/template", "./", { overwrite: true }, function (err) {
+	if (err) {
+		console.error(err);
+	}
+});
+
+exec(__dirname + "/adapt-package-and-schema");
+//"${SCRIPTDIR}/adapt-package-and-schema"
 
