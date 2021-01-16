@@ -1,0 +1,50 @@
+#!/bin/bash
+
+APP="$(basename "${PWD}" | sed -e "s/^osiota-app-//g" -e "s/^er-app-//g")"
+
+TARGET="index.js"
+if test "x$1" != "x"
+then
+	TARGET="$1"
+fi
+
+SCHEMAFILE="schema.json"
+if test "x${TARGET}" != "xindex.js"
+then
+	SCHEMAFILE="$(echo "${TARGET}" | sed -e "s/\.js/-schema.json/g")"
+fi
+echo "schema: ${SCHEMAFILE}"
+
+if test -f "${SCHEMAFILE}"
+then
+	echo "Error: ${SCHEMAFILE} already exists."
+	exit 1
+fi
+
+KEYS="$(grep -o "app_config\.[a-zA-Z0-9_]*" "${TARGET}" | sort | uniq | sed -e "s/app_config\.//g")"
+
+(
+	cat <<EOF
+{
+	"\$schema": "http://json-schema.org/draft/2019-09/schema#",
+	"type": "object",
+	"title": "osiota application ${APP}",
+	"description": "This application ... .",
+	"properties": {
+EOF
+for key in ${KEYS}
+do
+	cat <<EOF
+		"${key}": {
+			"type": "string",
+			"description": "Debug output text",
+			"examples": [ "Hello World!" ]
+		}
+EOF
+done
+	cat <<EOF
+	}
+}
+EOF
+
+) > "${SCHEMAFILE}"
