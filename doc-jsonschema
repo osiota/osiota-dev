@@ -1,17 +1,16 @@
-#!/bin/bash
+#!/usr/bin/env node
 
-SCRIPTPATH="$(readlink -f 2>/dev/null || perl -MCwd -e 'print Cwd::abs_path shift' $0)"
-SCRIPTDIR="$(dirname "${SCRIPTPATH}")"
+const fs = require("fs");
+const jsonschema2mk = require("jsonschema2mk");
+const options = require('minimist')(process.argv.slice(2));
 
-# Params:
-# --schema schema.json --app $name
+options.level = 1;
 
-echo "Writing README.md" >&2
-## create README.md
-README="$("./node_modules/.bin/jsonschema2mk" \
-	--level 1 \
-	--plugin "${SCRIPTDIR}/js2mk_multiple_schema.js" \
-	"$@")"
-echo "$README"
-#echo "${README}" >README.md
+var jsm = new jsonschema2mk(options);
+require("./js2mk_multiple_schema.js")(jsm.data, jsm);
 
+console.log("Writing README.md")
+
+var readme = jsm.generate(jsm.data);
+
+fs.writeFileSync("README.md", readme);
