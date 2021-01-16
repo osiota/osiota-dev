@@ -4,10 +4,7 @@ SCRIPTPATH="$(readlink -f 2>/dev/null || perl -MCwd -e 'print Cwd::abs_path shif
 SCRIPTDIR="$(dirname "${SCRIPTPATH}")"
 
 NEWNAME="$1"
-#git@gitlab.ibr.cs.tu-bs.de:eneff-campus-2020/er-app-rest-api.git
-# => osiota-app-rest-api
-
-if test "x$1" = "x"
+if test "x${NEWNAME}" = "x"
 then
 	echo "Usage: prog NEWNAME"
 	exit 2
