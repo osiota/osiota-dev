@@ -1,0 +1,8 @@
+#!/usr/bin/env -P .:osiota:../osiota:../../osiota:../../../osiota osiota.js --config
+{
+	"app": [{
+		"name": "MYAPP",
+		"config": {
+		}
+	}]
+}

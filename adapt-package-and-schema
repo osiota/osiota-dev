@@ -14,7 +14,7 @@ try {
 	if (typeof description !== "string") {
 		throw new Error("Description not defined");
 	}
-	description = description.replace(/\. .*/, "");
+	description = description.replace(/\..*/, "");
 
 	var app = process.cwd()
 			.replace(/.*\//, "")
@@ -24,9 +24,15 @@ try {
 		name: "osiota-app-"+app,
 		license: "MIT",
 		author: "Simon Walz and others",
+		scripts: {
+			doc: 'osiota-dev-doc-jsonschema --schema schema.json --app $npm_package_name'
+		},
 		repository: {
 			type: "git",
 			url: "https://github.com/osiota/osiota-app-"+app+".git",
+		},
+		devDependencies: {
+			"osiota-dev": "^1.x"
 		},
 		description: description,
 	}, {

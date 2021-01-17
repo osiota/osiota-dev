@@ -5,5 +5,11 @@
   "main": "index.js",
   "author": "Simon Walz and others",
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {},
+  "devDependencies": {
+    "osiota-dev": "^1.x"
+  },
+  "scripts": {
+    "doc": "osiota-dev-doc-jsonschema --schema schema.json --app $npm_package_name"
+  }
 }
