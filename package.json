@@ -7,7 +7,9 @@
     "osiota-dev-doc-jsonschema": "doc-jsonschema",
     "osiota-dev-adapt-ps": "adapt-package-and-schema",
     "osiota-dev-new-module": "new-module",
-    "osiota-dev-schema-create": "schema-create"
+    "osiota-dev-schema-create": "schema-create",
+    "osiota-dev-upload-to-github": "upload-to-github",
+    "osiota-dev-publish": "publish"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if test "x$1" = "x" || test "x$1" = "xpatch"
+then
+	LEVEL=patch
+elif test "x$1" = "xpatch" || test "x$1" = "xminor" || test "x$1" = "xmajor"
+then
+	LEVEL="$1"
+else
+	echo "Usage: publish [patch|minor|major]"
+	exit 2
+fi
+
+if test "x$(git tag)" = "x"
+then
+	# no tags, publish verion 1.0.0:
+	npm version 1.0.0 -m "Version %s" || exit 1
+else
+	npm version ${LEVEL} -m "Version %s" || exit 1
+fi
+
+git push && git push --tags && npm publish
