@@ -8,7 +8,7 @@
     "osiota-dev-adapt-ps": "adapt-package-and-schema",
     "osiota-dev-new-module": "new-module",
     "osiota-dev-schema-create": "schema-create",
-    "osiota-dev-upload-to-github": "upload-to-github",
+    "osiota-dev-upload-to-github-group": "upload-to-github-group",
     "osiota-dev-publish": "publish"
   },
   "scripts": {
