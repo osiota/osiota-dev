@@ -23,7 +23,7 @@ TOKEN="$(cat ~/.github-token | head -n 1)"
 if test "x${TOKEN}" = "x"
 then
 	echo "Error: Token not defined." >&2
-	echo "Please write Github token to file: ~/.gitub-token" >&2
+	echo "Please write Github token to file: ~/.github-token" >&2
 	exit 1
 fi
 
@@ -42,11 +42,11 @@ if test "x$?" = "x0"
 then
 	echo "Repo not created: ${APP}" >&2
 	echo "RESULT: ${RESULT}"
-	exit
+	exit 1
 fi
 
 
-git remote | grep "origin"
+git remote | grep -q "origin"
 if test "x$?" = "x1"
 then
 	git remote add origin git@github.com:osiota/${APP}.git
