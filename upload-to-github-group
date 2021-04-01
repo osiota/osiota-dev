@@ -9,7 +9,7 @@ then
 	exit 1
 fi
 
-if git remote get-url origin | grep -q github.com >/dev/null
+if git remote get-url origin 2>/dev/null | grep -q github.com >/dev/null
 then
 	echo "Error: Repo already linked to Github"
 	exit 1
@@ -37,11 +37,13 @@ fi
 echo "Create Repo: ${APP}"
 echo "Description: ${REPODESC}"
 
-RESULT="$(curl --fail -H "Authorization: token  ${TOKEN}" https://api.github.com/orgs/osiota/repos -d "{\"name\":\"${APP}\", \"private\": false, \"description\": \"${REPODESC}\", \"has_wiki\": false, \"has_projects\": false}" 2>&1)"
-if test "x$?" = "x0"
+RESULT="$(curl -v --fail -H "Authorization: token  ${TOKEN}" https://api.github.com/orgs/osiota/repos -d "{\"name\":\"${APP}\", \"private\": false, \"description\": \"${REPODESC}\", \"has_wiki\": false, \"has_projects\": false}" 2>&1)"
+EXITCODE="$?"
+if test "x${EXITCODE}" != "x0"
 then
 	echo "Repo not created: ${APP}" >&2
 	echo "RESULT: ${RESULT}"
+	echo "Exit code: ${EXITCODE}"
 	exit 1
 fi
 
