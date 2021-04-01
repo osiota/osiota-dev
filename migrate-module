@@ -18,15 +18,15 @@ fi
 
 if test "x${NEWNAME}" = "x"
 then
-	NEWNAME="osiota-app-$(basename "${REPO}" ".git" | sed -e "s/(er|osiota)-app-//")"
+	NEWNAME="osiota-app-$(basename "${REPO}" ".git" | sed -e "s/^er-app-//" | sed -e "s/^osiota-app-//")"
 fi
 echo "APP: ${NEWNAME}"
 
 
 # Clone the old repository:
 
-#git clone "${REPO}" "${NEWNAME}"
-#cd "${NEWNAME}/"
+git clone "${REPO}" "${NEWNAME}"
+cd "${NEWNAME}/"
 
 
 ## Exec Plugin script:
@@ -75,9 +75,12 @@ read CONT
 
 ## Rebase the commits onto the template repository:
 
+git remote remove origin
 git remote add upstream git@github.com:osiota/base-repo-osiota-app.git
 git fetch upstream
 git rebase --onto upstream/master --root master
+git remote remove upstream
+rm -Rf .git/refs/original/
 
 
 ## Adapt package and schema files:
