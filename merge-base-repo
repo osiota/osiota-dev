@@ -1,0 +1,7 @@
+#!/bin/bash
+
+git remote add osiotabase git@github.com:osiota/base-repo-osiota-app.git && \
+	git fetch osiotabase && \
+	git merge osiotabase/master -m "Merge remote base-repo-osiota-app"
+
+git remote remove osiotabase

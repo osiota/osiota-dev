@@ -9,6 +9,7 @@
     "osiota-dev-new-module": "new-module",
     "osiota-dev-schema-create": "schema-create",
     "osiota-dev-upload-to-github-group": "upload-to-github-group",
+    "osiota-dev-merge-base-repo": "merge-base-repo",
     "osiota-dev-publish": "publish"
   },
   "scripts": {

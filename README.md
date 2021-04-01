@@ -154,7 +154,11 @@ npx osiota-dev-publish major
 
 ### Update base repository
 
-TODO
+To update your repository to the newest version of the [template repository](https://github.com/osiota/base-repo-osiota-app):
+
+```base
+npx osiota-dev-merge-base-repo
+```
 
 ## Migrate App
 
