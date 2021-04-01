@@ -1,5 +1,15 @@
 #!/bin/bash
 
+## Test if there are uncommited changes
+
+if test "x$(git status --porcelain=v1 2>/dev/null | wc -l)" != "x0"
+then
+	echo "There are uncommited changes"
+	exit 1
+fi
+
+## Parse arguments
+
 if test "x$1" = "x" || test "x$1" = "xpatch"
 then
 	LEVEL=patch
@@ -11,12 +21,16 @@ else
 	exit 2
 fi
 
+## Create a new version
+
 if test "x$(git tag)" = "x"
 then
-	# no tags, publish verion 1.0.0:
+	# no tags, publish version 1.0.0:
 	npm version 1.0.0 --allow-same-version -m "Version %s" || exit 1
 else
 	npm version ${LEVEL} -m "Version %s" || exit 1
 fi
+
+## Publish
 
 git push && git push --tags && npm publish
