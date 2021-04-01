@@ -2,9 +2,9 @@
 
 ## Test if there are uncommited changes
 
-if test "$(git status --porcelain=v1 2>/dev/null | wc -l)" -gt "0"
+if test "x$(git status --porcelain=v1 2>/dev/null)" != "x"
 then
-	echo "There are uncommited changes"
+	echo "Error: There are uncommited changes or untracked files."
 	exit 1
 fi
 
