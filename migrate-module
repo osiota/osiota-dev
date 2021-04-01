@@ -1,0 +1,86 @@
+#!/bin/bash
+# This scripts migrates an existing repository onto the osiota template
+# repository.
+
+SCRIPTPATH="$(readlink -f 2>/dev/null || perl -MCwd -e 'print Cwd::abs_path shift' $0)"
+SCRIPTDIR="$(dirname "${SCRIPTPATH}")"
+
+## Parse the arguments:
+
+export REPO="$1"
+export NEWNAME="$2"
+
+if test "x$1" = "x"
+then
+	echo "Usage: prog REPOURL [NEWNAME]"
+	exit 2
+fi
+
+if test "x${NEWNAME}" = "x"
+then
+	NEWNAME="osiota-app-$(basename "${REPO}" ".git" | sed -e "s/(er|osiota)-app-//")"
+fi
+echo "APP: ${NEWNAME}"
+
+
+# Clone the old repository:
+
+#git clone "${REPO}" "${NEWNAME}"
+#cd "${NEWNAME}/"
+
+
+## Exec Plugin script:
+
+PLUGINSCRIPT="${SCRIPTDIR}/migrate-plugin.sh"
+if test -x "${PLUGINSCRIPT}"
+then
+	"${PLUGINSCRIPT}"
+fi
+
+
+## Change commiter email and name (disabled):
+
+NEW_NAME="$(git config user.name)"
+NEW_EMAIL="$(git config user.email)"
+
+if false
+then
+	git filter-branch --env-filter "
+	if [ \"\$GIT_COMMITTER_EMAIL\" = '$NEW_EMAIL' ]
+	then
+		export GIT_COMMITTER_NAME='$NEW_NAME'
+		export GIT_COMMITTER_EMAIL='$NEW_EMAIL'
+	fi
+	if [ \"\$GIT_AUTHOR_EMAIL\" = '$NEW_EMAIL' ]
+	then
+		export GIT_AUTHOR_NAME='$NEW_NAME'
+		export GIT_AUTHOR_EMAIL='$NEW_EMAIL'
+	fi
+	" --tag-name-filter cat -- --branches --tags
+fi
+
+## Remove old files from history:
+
+git filter-branch -f --index-filter 'git rm --cached --ignore-unmatch .gitignore LICENSE .editorconfig' --prune-empty --tag-name-filter cat -- --branches --tags
+
+## List all authors:
+
+echo "AUTHORS:"
+git log --format='%aN <%aE>' | awk '{arr[$0]++} END{for (i in arr){print arr[i], i;}}' | sort -rn | cut -d\  -f2-
+
+echo
+echo "Have you asked all other authors, that you want to publish this repo?"
+echo "Continue? [else hit Ctrl + C]"
+read CONT
+
+## Rebase the commits onto the template repository:
+
+git remote add upstream git@github.com:osiota/base-repo-osiota-app.git
+git fetch upstream
+git rebase --onto upstream/master --root master
+
+
+## Adapt package and schema files:
+
+"${SCRIPTDIR}/adapt-package-and-schema"
+
