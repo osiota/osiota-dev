@@ -117,6 +117,14 @@ npx osiota-dev-publish
 
 ## Maintanance
 
+### Update generated files:
+
+Update README:
+
+```bash
+npm run doc
+```
+
 ### Publish a new version:
 
 A small change: `1.2.X`
