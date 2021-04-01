@@ -125,6 +125,12 @@ Update README:
 npm run doc
 ```
 
+Update package.json
+
+```bash
+npx osiota-dev-adapt-ps
+```
+
 ### Publish a new version:
 
 A small change: `1.2.X`
