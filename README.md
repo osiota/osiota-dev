@@ -45,7 +45,7 @@ You may as well commit your changes.
 
 ### Step 3: Create and edit schema file(s):
 
-Run for each osiota entry script file (here `file.js`)
+If you need to create the `schema.json` file, run for each osiota entry script file (here `file.js`):
 
 ```bash
 npx osiota-dev-create-schema file.js
