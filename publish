@@ -14,7 +14,7 @@ fi
 if test "x$(git tag)" = "x"
 then
 	# no tags, publish verion 1.0.0:
-	npm version 1.0.0 -m "Version %s" || exit 1
+	npm version 1.0.0 --allow-same-version -m "Version %s" || exit 1
 else
 	npm version ${LEVEL} -m "Version %s" || exit 1
 fi
