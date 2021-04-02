@@ -34,13 +34,31 @@ KEYS="$(grep -o "app_config\.[a-zA-Z0-9_]*" "${TARGET}" | sort | uniq | sed -e "
 EOF
 for key in ${KEYS}
 do
-	cat <<EOF
+	if test "x${key}" == "xmap"
+	then
+		cat <<EOF
+		"${key}": {
+			"type": "array",
+			"description": "Mapping elements",
+			"items": {
+				"type": "object",
+				"properties": {
+					"key": {
+						"type": "string"
+					}
+				}
+			}
+		}
+EOF
+	else
+		cat <<EOF
 		"${key}": {
 			"type": "string",
 			"description": "Debug output text",
 			"examples": [ "Hello World!" ]
 		}
 EOF
+	fi
 done
 	cat <<EOF
 	}
