@@ -8,8 +8,19 @@ var merge = function(a, b) {
 			changed = merge(a[key], b[key]) || changed;
 			return;
 		}
+		if (typeof b[key] === "function") {
+			let cached = a[key];
+			a[key] = b[key](a[key]);
+			changed = a[key] !== cached || changed;
+			return;
+		}
 		if (a[key] !== b[key]) {
-			a[key] = b[key];
+			if (typeof b[key] === "object" && b[key] !== null) {
+				a[key] = {};
+				merge(a[key], b[key]);
+			} else {
+				a[key] = b[key];
+			}
 			changed = true;
 		}
 	});
