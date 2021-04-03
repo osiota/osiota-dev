@@ -133,19 +133,22 @@ npx osiota-dev-adapt-ps
 
 ### Publish a new version:
 
-A small change: `1.2.X`
+A small change: `1.2.X`<br/>
+*which just fixes something*
 
 ```bash
 npx osiota-dev-publish patch
 ```
 
-A normal change: `1.X.0`
+A normal change: `1.X.0`<br/>
+*which adds an additional feature*
 
 ```bash
 npx osiota-dev-publish minor
 ```
 
-A big step: `X.0.0`
+A big step: `X.0.0`<br/>
+*which is INCOMPATIBLE with the versions before.*
 
 ```bash
 npx osiota-dev-publish major
