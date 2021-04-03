@@ -19,7 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "fs-extra": "^9.1.0",
-    "jsonschema2mk": "^1.3.0",
+    "jsonschema2mk": "^1.3.2",
     "minimist": "^1.2.5"
   }
 }
