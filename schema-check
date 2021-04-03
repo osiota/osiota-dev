@@ -1,0 +1,182 @@
+#!/usr/bin/env node
+
+/*
+Legende: *=okay, -=not, ?=unknown
+## Supported features:
+  * Basic attributes:
+    * title*, description*, default-, examples?
+    * enum-, const-
+    * deprecated-
+  * number-, integer-
+    * minimum-, maximum-, exclusiveMinimum-, exclusiveMaximum-
+    * multipleOf-
+  * string-
+    * minLength-, maxLength-
+    * format-
+    * pattern-
+    * contentMediaType-
+    * contentEncoding-
+  * boolean-
+  * null-
+  * object
+    * properties*
+    * additionalProperties (as boolean and as object)*
+    * patternProperties*
+    * required*
+    * minProperties-, maxProperties-
+    * propertyNames.pattern?
+  * array
+    * items (schema)*
+    * items (array of schemas)*
+    * minItems-, maxItems-
+    * uniqueItems-
+    * contains*
+    * minContains-, maxContains-
+  * allOf*, oneOf*, anyOf*, not*
+
+
+### Missing JSON schema features
+
+  * if, then, else
+  * object: dependencies (Properties and Schema)
+ */
+
+console.bold = function() {
+	var args = Array.prototype.slice.call(arguments, 0);
+	console.log('\x1b[1m%s\x1b[0m', args.join(" "));
+}
+
+const argv = require('minimist')(process.argv.slice(2));
+const fs = require("fs");
+
+var warnings = argv.warnings;
+
+var check_object = function(element, path) {
+	if (!Array.isArray(element.required) && (
+			typeof element.additionalProperties === "object" ||
+			typeof element.properties === "object" ||
+			typeof element.patternProperties === "object")) {
+		console.log("  * No required array");
+	}
+	if (typeof element.additionalProperties === "object" &&
+			typeof element.additionalProperties !== "boolean") {
+		console.log("  * Additional properties not defined");
+	}
+	if (typeof element.properties === "object" &&
+			element.properties !== null) {
+		var keys = Object.keys(element.properties);
+		keys.forEach(function(key) {
+			let prop = element.properties[key];
+			check_element(prop, path + "/" + key);
+		});
+	}
+	if (typeof element.patternProperties === "object" &&
+			element.patternProperties !== null) {
+		var keys = Object.keys(element.patternProperties);
+		keys.forEach(function(key) {
+			let prop = element.patternProperties[key];
+			check_element(prop, path + "/" + key);
+		});
+	}
+	if (typeof element.additionalProperties === "object" &&
+			element.additionalProperties !== null) {
+		check_element(element.additionalProperties, path + "/aP");
+	}
+}
+
+var check_array = function(element, path) {
+	if (typeof element.items === "object" &&
+			element.items !== null) {
+		if (Array.isArray(element.items)) {
+			element.items.forEach(function(item, i) {
+				check_element(item, path + "[" + i + "]");
+			});
+		} else {
+			check_element(element.items, path + "/items");
+		}
+	}
+	if (typeof element.contains === "object" &&
+			element.contains !== null) {
+		check_element(element.contains, path + "/contains");
+	}
+}
+
+var copy_base = function(item, element) {
+	return {
+		type: element.type,
+		title: element.title,
+		description: element.description,
+		additionalProperties: !!element.additionalProperties,
+		...item,
+	};
+}
+
+var getref = function(object) {
+	if (typeof object['$ref'] === "string") {
+		var o = schema;
+		var path = object['$ref'].replace(/^#\//, '');
+		path.split(/\//)
+				.forEach(function(p) {
+			o = o[p];
+		});
+		o.path = path;
+		return o;
+	}
+	return object;
+}
+
+var check_element = function(element, path) {
+	element = getref(element);
+	console.bold(path || "/" );
+	if (typeof element.type === "undefined") {
+		console.error("  * Error: No type");
+	}
+	if (typeof element.title !== "string") {
+		console.log("  * No title");
+	}
+	if (typeof element.description !== "string" && warnings) {
+		console.log("  * No description");
+	}
+	if (element.type === "object") {
+		check_object(element, path);
+	}
+	if (element.type === "array") {
+		check_array(element, path);
+	}
+
+	if (Array.isArray(element.allOf)) {
+		element.allOf.forEach(function(item, i) {
+			check_element(copy_base(item, element), path + "/allOf["+i+"]");
+		});
+	}
+	if (Array.isArray(element.anyOf)) {
+		element.anyOf.forEach(function(item, i) {
+			if (typeof item.type === "undefined") {
+				item.type = element.type;
+			}
+			check_element(copy_base(item, element), path + "/anyOf["+i+"]");
+		});
+	}
+	if (Array.isArray(element.oneOf)) {
+		element.oneOf.forEach(function(item, i) {
+			check_element(copy_base(item, element), path + "/oneOf["+i+"]");
+		});
+	}
+	if (typeof element.not === "object" && element.not !== null) {
+		var item = copy_base(element.not, element);
+		check_element(item, path + "/not");
+	}
+}
+
+var schema;
+try {
+	var filename = "schema.json"
+	if (typeof argv.schema === "string") {
+		filename = argv.schema;
+	}
+	schema = JSON.parse(fs.readFileSync(filename));
+
+	check_element(schema, "")
+} catch(err) {
+	console.error(err);
+}
