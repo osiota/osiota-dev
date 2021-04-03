@@ -1,6 +1,6 @@
 {
   "name": "osiota-dev",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "This repository contains helper scripts for the development of [osiota](https://github.com/osiota/osiota).",
   "main": "index.js",
   "bin": {
