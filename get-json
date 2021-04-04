@@ -3,6 +3,30 @@
 const argv = require('minimist')(process.argv.slice(2));
 const fs = require("fs");
 
+var get_sub_path = function(data, param_name) {
+	var p = param_name.split(/[\.\/]/);
+	var v = data;
+	if (typeof v !== "object" || v === null) {
+		return null;
+	}
+	while(p.length > 1) {
+		var pk = p.shift();
+		if (!v.hasOwnProperty(pk) ||
+				typeof v[pk] !== "object" ||
+				v[pk] === null ) {
+			return null;
+		}
+		v = v[pk];
+	}
+	var pk = p.shift();
+	if (!v.hasOwnProperty(pk)) {
+		return null;
+	}
+	return v[pk];
+};
+
+
 const p = JSON.parse(fs.readFileSync(argv.file));
 
-console.log(p[argv.key]);
+var value = get_sub_path(p, argv.key);
+if (value !== null) console.log(value);
