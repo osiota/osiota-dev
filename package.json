@@ -19,8 +19,8 @@
   "author": "Simon Walz and others",
   "license": "MIT",
   "dependencies": {
-    "fs-extra": "^9.1.0",
-    "jsonschema2mk": "^1.4.0",
-    "minimist": "^1.2.6"
+    "fs-extra": "^11.3.4",
+    "jsonschema2mk": "^2.1.2",
+    "minimist": "^1.2.8"
   }
 }
